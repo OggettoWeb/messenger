@@ -1,0 +1,113 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Oggetto Web Messenger extension for Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade
+ * the Oggetto Messenger module to newer versions in the future.
+ * If you wish to customize the Oggetto Messenger module for your needs
+ * please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Messenger
+ * @copyright  Copyright (C) 2012 Oggetto Web (http://oggettoweb.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+require_once dirname(__FILE__) . '/../abstract.php';
+
+/**
+ * Messenger updates message processor shell script
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Messenger
+ * @author     Dan Kocherga <dan@oggettoweb.com>
+ */
+class Oggetto_Shell_Messenger_Message_Processor extends Oggetto_Shell_Messenger_Abstract
+{
+    /**
+     * Initialize application and parse input parameters
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        if ($this->_includeMage) {
+            require_once $this->_getRootPath() . 'app' . DIRECTORY_SEPARATOR . 'Mage.php';
+            Varien_Profiler::enable();
+
+            Mage::app($this->_appCode, $this->_appType);
+            $this->_factory = new Mage_Core_Model_Factory();
+        }
+
+        $this->_applyPhpVariables();
+        $this->_parseArgs();
+        $this->_construct();
+        $this->_validate();
+        $this->_showHelp();
+    }
+
+    /**
+     * Run script
+     *
+     * @return void
+     */
+    public function run()
+    {
+        // Call log to setup logging DI
+        $this->_log()->info('Started message processing');
+
+        try {
+            Mage::app()->addEventArea('adminhtml');
+
+            $stdin = fopen('php://stdin', 'r');
+            $message = unserialize(fgets($stdin));
+            if ($message instanceof Oggetto_Messenger_Model_Message_Interface) {
+
+                $transport = new Varien_Object();
+                Mage::dispatchEvent('sh_messenger_message_process_before', ['message' => $message, 'transport' => $transport]);
+
+                Mage::getSingleton('messenger/di')
+                    ->get('messenger/event_receiver')
+                    ->processMessage($message);
+
+                Mage::dispatchEvent('sh_messenger_message_process_after', ['message' => $message, 'transport' => $transport]);
+            } else {
+                throw Mage::exception('Oggetto_Messenger', 'Undefined message instance received');
+            }
+        } catch (Exception $e) {
+            $this->_log()->err($e);
+        }
+    }
+
+    /**
+     * Retrieve usage help message
+     *
+     * @return string
+     */
+    public function usageHelp()
+    {
+        return <<<USAGE
+Processes the update message.
+Reads serialized message object from STDIN.
+Usage: message_processor [options]
+
+    --log-format  Log format (json or text). Text by default
+USAGE;
+    }
+}
+
+
+
+$shell = new Oggetto_Shell_Messenger_Message_Processor();
+Mage::setIsDeveloperMode(true);
+$shell->run();
+

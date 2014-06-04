@@ -1,0 +1,186 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Oggetto Web Messenger extension for Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade
+ * the Oggetto Messenger module to newer versions in the future.
+ * If you wish to customize the Oggetto Messenger module for your needs
+ * please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Messenger
+ * @copyright  Copyright (C) 2012 Oggetto Web (http://oggettoweb.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+require_once __DIR__ . '/../abstract.php';
+
+/**
+ * Messenger updates queue listener shell script
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Messenger
+ * @author     Dan Kocherga <dan@oggettoweb.com>
+ */
+class Oggetto_Shell_Messenger_Queue_Listener extends Oggetto_Shell_Messenger_Abstract
+{
+    /**
+     * Distributed listener type
+     */
+    const TYPE_DISTRIBUTED = 'd';
+
+    /**
+     * Selfish listener type
+     */
+    const TYPE_SELFISH = 's';
+
+    /**
+     * Initialize application and parse input parameters
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        if ($this->_includeMage) {
+            require_once $this->_getRootPath() . 'app' . DIRECTORY_SEPARATOR . 'Mage.php';
+            Varien_Profiler::enable();
+
+            Mage::app($this->_appCode, $this->_appType);
+            $this->_factory = new Mage_Core_Model_Factory();
+        }
+
+        $this->_applyPhpVariables();
+        $this->_parseArgs();
+        $this->_construct();
+        $this->_validate();
+        $this->_showHelp();
+    }
+
+    /**
+     * Run script
+     *
+     * @return void
+     */
+    public function run()
+    {
+        if (!$this->getArg('queue') || !$this->getArg('type')) {
+            die($this->usageHelp());
+            return;
+        }
+
+        $this->_log()->info("Started queue listener: {$this->getArg('queue')}:{$this->getArg('type')}");
+        try {
+            Mage::app()->addEventArea('adminhtml');
+
+            // Set up transport
+            Mage::getSingleton('messenger/di')->container()->instanceManager()
+                ->setParameters(
+                    'Oggetto_Messenger_Model_Transport_Rabbitmq',
+                    array('consumeQueueus' => array($this->getArg('queue')))
+                );
+
+            Mage::getSingleton('messenger/di')
+                ->get('messenger/event_receiver')
+                ->receive(array($this, $this->_getCallback()));
+        } catch (Exception $e) {
+            $this->_log()->crit($e);
+        }
+    }
+
+    /**
+     * Get message process callback
+     */
+    private function _getCallback()
+    {
+        switch ($this->getArg('type')) {
+            case self::TYPE_DISTRIBUTED: return 'processMessageInSeparateProcess';
+            case self::TYPE_SELFISH: return 'processMessage';
+        }
+
+        die('Undefined callback type');
+    }
+
+    /**
+     * Process received message in a separate process
+     *
+     * @param Oggetto_Messenger_Model_Message_Interface $message Message
+     * @return void
+     */
+    public function processMessageInSeparateProcess(Oggetto_Messenger_Model_Message_Interface $message)
+    {
+        $logFormat = $this->getArg('log-format');
+        $resource = popen(dirname(__FILE__) . '/message_processor --log-format ' . $logFormat, 'w');
+        fwrite($resource, serialize($message));
+        pclose($resource);
+    }
+
+    /**
+     * Process received message
+     *
+     * @param Oggetto_Messenger_Model_Message_Interface $message Message
+     * @return void
+     */
+    public function processMessage(Oggetto_Messenger_Model_Message_Interface $message)
+    {
+        $transport = new Varien_Object();
+        Mage::dispatchEvent('sh_messenger_message_process_before', ['message' => $message, 'transport' => $transport]);
+
+        Mage::getSingleton('messenger/di')
+            ->get('messenger/event_receiver')
+            ->processMessage($message);
+
+        Mage::dispatchEvent('sh_messenger_message_process_after', ['message' => $message, 'transport' => $transport]);
+
+        $this->_checkMemory();
+    }
+
+    /**
+     * Check memory usage by listener
+     *
+     * @return void
+     */
+    private function _checkMemory()
+    {
+        if ($memoryLimit = $this->getArg('memory_limit')) {
+            if (memory_get_usage() > $memoryLimit) {
+                $this->_log()->notice('Memory limit exceeded');
+                exit();
+            }
+        }
+    }
+
+    /**
+     * Retrieve usage help message
+     *
+     * @return void
+     */
+    public function usageHelp()
+    {
+        return <<<USAGE
+Listens for updates in the queue
+Usage: queue_listener [options]
+
+    --queue <queue>        RabbitMQ queue name (required).
+    --type  <type>         Listener type (required):
+                           `d` to run each message in new process (distributed).
+                           `s` to run each message in this process (selfish).
+    --memory_limit <limit> Memory limit in bytes for this process. Used for `s`-type. Optional.
+    --log-format           Log format (json or text). Text by default
+
+USAGE;
+    }
+}
+
+$shell = new Oggetto_Shell_Messenger_Queue_Listener();
+Mage::setIsDeveloperMode(true);
+$shell->run();

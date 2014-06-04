@@ -1,0 +1,9 @@
+{
+    "name": "oggettoweb/messenger",
+    "description": "RabbitMQ wrapper for Magento",
+    "require": {
+        "videlalvaro/php-amqplib": "dev-master",
+        "zendframework/zend-di": "2.0.*",
+        "zendframework/zend-eventmanager": "2.0.*"
+    }
+}

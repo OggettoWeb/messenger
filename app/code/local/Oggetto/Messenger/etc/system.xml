@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Oggetto Web Messenger extension for Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade
+ * the Oggetto Messenger module to newer versions in the future.
+ * If you wish to customize the Oggetto Messenger module for your needs
+ * please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category   Oggetto
+ * @package    Oggetto_Messenger
+ * @copyright  Copyright (C) 2012
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <tabs>
+        <messenger translate="label" module="messenger">
+            <label>Messenger</label>
+            <sort_order>1000</sort_order>
+        </messenger>
+    </tabs>
+    <sections>
+        <messenger translate="label" module="messenger">
+            <class>separator-top</class>
+            <label>Messenger Setup</label>
+            <tab>messenger</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>100</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>0</show_in_website>
+            <show_in_store>0</show_in_store>
+            <groups>
+                <rabbitmq translate="label">
+                    <label>Rabbit MQ</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <host translate="label">
+                            <label>Host</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>-</show_in_store>
+                        </host>
+                        <port translate="label">
+                            <label>Port</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>-</show_in_store>
+                        </port>
+                        <username translate="label">
+                            <label>Username</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>-</show_in_store>
+                        </username>
+                        <pass translate="label">
+                            <label>Password</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>-</show_in_store>
+                        </pass>
+                        <virtualhost translate="label">
+                            <label>Virtual Host</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>-</show_in_store>
+                        </virtualhost>
+                    </fields>
+                </rabbitmq>
+                <log translate="label">
+                    <label>Logging</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <format translate="label">
+                            <label>Log Format</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>messenger/log_formatter_systemSource</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>-</show_in_store>
+                        </format>
+                        <file translate="label">
+                            <label>Log File</label>
+                            <frontend_type>text</frontend_type>
+                            <comment>Messenger daemons will NOT automatically write to this file</comment>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>-</show_in_store>
+                        </file>
+                    </fields>
+                </log>
+            </groups>
+        </messenger>
+    </sections>
+</config>

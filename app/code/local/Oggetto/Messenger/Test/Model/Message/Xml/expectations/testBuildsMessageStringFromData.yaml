@@ -1,0 +1,18 @@
+xml: |
+    <?xml version="1.0" encoding="UTF-8"?> 
+    <update>
+       <event name="event_name">
+           <field>field-value</field>
+           <parent>
+               <child>child-value</child>
+           </parent>
+           <list>
+               <node>value_one</node>
+               <node>
+                   <subnode>
+                        <subnode_child>value</subnode_child>
+                   </subnode>
+               </node>
+           </list>
+       </event>
+    </update>

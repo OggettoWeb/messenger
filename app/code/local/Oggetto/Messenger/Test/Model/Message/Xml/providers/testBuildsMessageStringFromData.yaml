@@ -1,0 +1,15 @@
+-
+    # message data
+    - field: field-value
+      parent:
+        child: child-value
+      list:
+        node:
+            - value_one
+            - subnode:
+                subnode_child: value
+
+    # message meta-data
+    - name: event_name
+      _class: event
+
