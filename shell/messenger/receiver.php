@@ -558,7 +558,7 @@ Usage: php receiver.php <command> [options]
              - two workers which listen `bar` queue. `d` means that it will run each message in separate process
              - three workers which listen `baz` queue. `d` means that it will run each message in separate process
 
-            More details about `start` options: https://github.com/OggettoWeb/messenger/wiki
+             More details about `start` options: https://github.com/OggettoWeb/messenger/wiki
 
     stop    Stop the receiver daemon
     reload  Re-spawn all receiver workers

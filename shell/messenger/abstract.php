@@ -24,6 +24,7 @@
 
 require_once __DIR__ . '/../abstract.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../lib/Varien/Profiler.php';
 
 /**
  * Abstract messenger shell class
@@ -34,6 +35,16 @@ require_once __DIR__ . '/../../vendor/autoload.php';
  */
 abstract class Oggetto_Shell_Messenger_Abstract extends Mage_Shell_Abstract
 {
+    /**
+     * Init the script
+     *
+     * @return void
+     */
+    public function _construct()
+    {
+        $this->_initLogger();
+    }
+
     /**
      * Get log
      *
@@ -58,15 +69,6 @@ abstract class Oggetto_Shell_Messenger_Abstract extends Mage_Shell_Abstract
         Mage::getSingleton('messenger/di')->container()
             ->instanceManager()->setParameters('log', ['writer' => $writer]);
     }
-
-    /**
-     * Init the script
-     *
-     * @return \Oggetto_Shell_Messenger_Abstract
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->_initLogger();
-    }
 }
+
+Varien_Profiler::enable();

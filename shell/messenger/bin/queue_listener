@@ -45,28 +45,6 @@ class Oggetto_Shell_Messenger_Queue_Listener extends Oggetto_Shell_Messenger_Abs
     const TYPE_SELFISH = 's';
 
     /**
-     * Initialize application and parse input parameters
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        if ($this->_includeMage) {
-            require_once $this->_getRootPath() . 'app' . DIRECTORY_SEPARATOR . 'Mage.php';
-            Varien_Profiler::enable();
-
-            Mage::app($this->_appCode, $this->_appType);
-            $this->_factory = new Mage_Core_Model_Factory();
-        }
-
-        $this->_applyPhpVariables();
-        $this->_parseArgs();
-        $this->_construct();
-        $this->_validate();
-        $this->_showHelp();
-    }
-
-    /**
      * Run script
      *
      * @return void

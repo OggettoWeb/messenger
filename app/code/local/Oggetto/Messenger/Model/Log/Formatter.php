@@ -40,7 +40,7 @@ class Oggetto_Messenger_Model_Log_Formatter
      */
     public function factory($code)
     {
-        switch ($code) {
+        switch ((string) $code) {
             case 'json':
                 return Mage::getModel('messenger/log_formatter_json');
             case 'text':

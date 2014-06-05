@@ -64,5 +64,6 @@ class Oggetto_Messenger_Test_Model_Log_Formatter
     {
         $formatter = Mage::getModel('messenger/log_formatter');
         $this->assertInstanceOf('Oggetto_Messenger_Model_Log_Formatter_Text', $formatter->factory('asdasd'));
+        $this->assertInstanceOf('Oggetto_Messenger_Model_Log_Formatter_Text', $formatter->factory(true));
     }
 }
