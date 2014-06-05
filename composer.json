@@ -12,6 +12,7 @@
     "extra": {
         "map": [
             ["shell/messenger", "shell/messenger"]
-        ]
+        ],
+        "magento-deploystrategy": "copy"
     }
 }
