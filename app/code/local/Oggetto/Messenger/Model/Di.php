@@ -125,7 +125,7 @@ class Oggetto_Messenger_Model_Di
     public function newInstance($path, $params = [])
     {
         $className = Mage::getConfig()->getModelClassName($path);
-        return $this->_di->newInstance($className);
+        return $this->_di->newInstance($className, $params);
     }
 
     /**
