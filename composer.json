@@ -8,5 +8,10 @@
         "zendframework/zend-di": "2.0.*",
         "zendframework/zend-eventmanager": "2.0.*",
         "magento-hackathon/magento-composer-installer": "*"
+    },
+    "extra": {
+        "map": [
+            "shell": "shell"
+        ]
     }
 }
