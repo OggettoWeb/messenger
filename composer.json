@@ -11,7 +11,7 @@
     },
     "extra": {
         "map": [
-            "shell": "shell"
+            ["shell", "shell"]
         ]
     }
 }
