@@ -1,5 +1,6 @@
 {
     "name": "oggettoweb/messenger",
+    "type": "magento-module",
     "description": "RabbitMQ wrapper for Magento",
     "require": {
         "php": ">=5.4.0",
