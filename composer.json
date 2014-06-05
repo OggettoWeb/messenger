@@ -11,7 +11,8 @@
     },
     "extra": {
         "map": [
-            ["shell/messenger", "shell/messenger"]
+            ["shell/messenger", "shell/messenger"],
+            ["app/code/local/Oggetto/Messenger", "app/code/local/Oggetto/Messenger"],
         ]
     }
 }
