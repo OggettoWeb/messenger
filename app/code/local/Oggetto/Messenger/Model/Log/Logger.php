@@ -63,4 +63,34 @@ class Oggetto_Messenger_Model_Log_Logger
         $writer->setFormatter($formatter);
         return $writer;
     }
+
+    /**
+     * Packs message and priority into Event array
+     *
+     * @param string  $message  Message to log
+     * @param integer $priority Priority of message
+     *
+     * @return array Event array
+     **/
+    protected function _packEvent($message, $priority)
+    {
+        return array_merge(array(
+                'timestamp'    => $this->_timestamp(),
+                'message'      => $message,
+                'priority'     => $priority,
+                'priorityName' => $this->_priorities[$priority]
+            ),
+            $this->_extras
+        );
+    }
+
+    /**
+     * Get current timestamp with milliseconds
+     *
+     * @return string
+     */
+    private function _timestamp()
+    {
+        return date(sprintf('Y-m-d\TH:i:s%sP', substr(microtime(), 1, 8)));
+    }
 }
