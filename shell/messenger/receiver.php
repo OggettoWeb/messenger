@@ -21,9 +21,9 @@
  * @copyright  Copyright (C) 2012 Oggetto Web (http://oggettoweb.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-
-require_once __DIR__ . '/../abstract.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
+define('MAGE_HOME', ($path = getenv('MAGE_HOME')) ? $path : realpath(__DIR__.'/../../'));
+require_once MAGE_HOME . '/shell/abstract.php';
+require_once MAGE_HOME . '/vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
