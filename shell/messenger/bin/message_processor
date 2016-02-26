@@ -46,7 +46,7 @@ class Oggetto_Shell_Messenger_Message_Processor extends Oggetto_Shell_Messenger_
             Mage::app()->addEventArea('adminhtml');
 
             $stdin = fopen('php://stdin', 'r');
-            $message = unserialize(fgets($stdin));
+            $message = unserialize(stream_get_contents($stdin));
             if ($message instanceof Oggetto_Messenger_Model_Message_Interface) {
 
                 $transport = new Varien_Object();
